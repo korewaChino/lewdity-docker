@@ -51,6 +51,6 @@ podman build -t lewdity .
 
 This game is licensed under CC-BY-NC-SA 4.0. You can find the source code here: <https://gitgud.io/Vrelnir/degrees-of-lewdity>
 
-The Containerfiles are under the Unlicense, you may use them for any purpose or as reference for your own web projects.
+The Containerfiles are under the Unlicense, you may use them for any purpose or as reference for your own (NSFW or not) projects.
 
 [Degrees of Lewdity]: https://www.vrelnir.com/

@@ -15,6 +15,10 @@ RUN ./compile.sh
 
 FROM caddy:latest
 
+LABEL org.opencontainers.image.licenses="CC-BY-NC-SA-4.0"
+LABEL org.opencontainers.image.url="https://www.vrelnir.com/"
+LABEL org.opencontainers.image.authors="Vrelnir <vrelnir@gmail.com>, Cappy Ishihara <cappy@cappuchino.xyz>"
+
 RUN mkdir -p /app
 COPY --from=builder /app/*.html /app
 COPY --from=builder /app/img /app/img

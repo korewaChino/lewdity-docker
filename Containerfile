@@ -1,4 +1,4 @@
-ARG GAME_VERSION=0.5.3.7
+ARG GAME_VERSION=0.5.6.10
 ARG SOURCE=https://gitgud.io/Vrelnir/degrees-of-lewdity.git
 
 FROM node:latest as builder

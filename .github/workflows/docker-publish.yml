@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       sha: ${{ steps.get-sha.outputs.sha }}
+      version: ${{ steps.get-sha.outputs.version }}
     steps:
       - name: Checkout upstream
         run: |
@@ -34,6 +35,7 @@ jobs:
           pushd upstream-repo
           git rev-parse HEAD
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "version=$(cat version)" >> $GITHUB_OUTPUT
           popd
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -41,11 +43,13 @@ jobs:
       - name: Write upstream SHA to file
         run: |
           echo "${{ steps.get-sha.outputs.sha }}" > UPSTREAM_REF.txt
+          echo "${{ steps.get-sha.outputs.version }}" > UPSTREAM_VERSION.txt
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add UPSTREAM_REF.txt
+          git add UPSTREAM_VERSION.txt
           git commit -m "Update UPSTREAM_REF.txt to ${{ steps.get-sha.outputs.sha }}" || echo "No changes to commit"
           git push origin HEAD:${{ github.ref }}
   write_sha:

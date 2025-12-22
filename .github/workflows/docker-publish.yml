@@ -25,6 +25,8 @@ env:
 jobs:
   fetch-upstream:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       sha: ${{ steps.get-sha.outputs.sha }}
       version: ${{ steps.get-sha.outputs.version }}

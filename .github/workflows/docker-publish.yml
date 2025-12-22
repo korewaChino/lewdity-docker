@@ -32,6 +32,7 @@ jobs:
       version: ${{ steps.get-sha.outputs.version }}
     steps:
       - name: Checkout upstream
+        id: get-sha
         run: |
           git clone --depth 1 ${{ env.UPSTREAM_REPO }} upstream-repo
           pushd upstream-repo

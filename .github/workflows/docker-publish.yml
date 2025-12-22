@@ -54,24 +54,6 @@ jobs:
           git add UPSTREAM_VERSION.txt
           git commit -m "Update UPSTREAM_REF.txt to ${{ steps.get-sha.outputs.sha }}" || echo "No changes to commit"
           git push origin HEAD:${{ github.ref }}
-  write_sha:
-    needs: fetch-upstream
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Write upstream SHA to file
-        run: |
-          echo "${{ needs.fetch-upstream.outputs.sha }}" > UPSTREAM_REF.txt
-
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add UPSTREAM_SHA.txt
-          git commit -m "Update UPSTREAM_SHA.txt to ${{ needs.fetch-upstream.outputs.sha }}" || echo "No changes to commit"
-          git push origin HEAD:${{ github.ref }}
 
   build:
     runs-on: ubuntu-latest

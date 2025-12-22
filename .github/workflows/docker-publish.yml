@@ -67,7 +67,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Read upstream version
+        id: read-version
+        run: |
+          VERSION=$(cat UPSTREAM_VERSION.txt)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -119,6 +125,8 @@ jobs:
           file: Containerfile
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            GAME_VERSION: ${{ steps.read-version.outputs.version }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker

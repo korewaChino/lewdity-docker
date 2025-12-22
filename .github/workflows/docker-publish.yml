@@ -7,7 +7,7 @@ name: Docker
 
 on:
   schedule:
-    - cron: "34 23 * * *"
+    - cron: "0 0 * * *"
   push:
     branches: ["main"]
     # Publish semver tags as releases.
@@ -20,12 +20,57 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  UPSTREAM_REPO: https://gitgud.io/Vrelnir/degrees-of-lewdity
 
 jobs:
+  fetch-upstream:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.get-sha.outputs.sha }}
+    steps:
+      - name: Checkout upstream
+        run: |
+          git clone --depth 1 ${{ env.UPSTREAM_REPO }} upstream-repo
+          pushd upstream-repo
+          git rev-parse HEAD
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          popd
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Write upstream SHA to file
+        run: |
+          echo "${{ steps.get-sha.outputs.sha }}" > UPSTREAM_REF.txt
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add UPSTREAM_REF.txt
+          git commit -m "Update UPSTREAM_REF.txt to ${{ steps.get-sha.outputs.sha }}" || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref }}
+  write_sha:
+    needs: fetch-upstream
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Write upstream SHA to file
+        run: |
+          echo "${{ needs.fetch-upstream.outputs.sha }}" > UPSTREAM_REF.txt
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add UPSTREAM_SHA.txt
+          git commit -m "Update UPSTREAM_SHA.txt to ${{ needs.fetch-upstream.outputs.sha }}" || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref }}
+
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
